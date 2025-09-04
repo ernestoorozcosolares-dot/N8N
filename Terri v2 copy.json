@@ -1,0 +1,1160 @@
+{
+  "name": "Terri v2 copy",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cbda1b40-cbce-40a6-b7b4-fb265e183c14",
+              "name": "thread_id",
+              "value": "={{$json.id}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2816,
+        -2592
+      ],
+      "id": "ce863e49-06da-4b6d-b6d8-e1da0c916e9c",
+      "name": "Crear Thread1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "twilio_whatsapp",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -3936,
+        -2880
+      ],
+      "id": "f85958e7-3a23-4948-9023-0388bb27093e",
+      "name": "Webhook1",
+      "webhookId": "5cc46622-e647-4b6a-a217-bf70ed839a2a"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/threads/{{$json.thread_id || $json.last_thread_id}}/messages\n",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "OpenAI-Beta",
+              "value": "assistants=v2"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"role\": \"user\",\n  \"content\": [\n    {\n      \"type\": \"text\",\n      \"text\": \"={{(\n        $json.message\n        || $json.Body\n        || $json.body?.Body\n        || $json['content']?.[0]?.text?.value\n        || $json.data?.[0]?.content?.find(c => c.type === 'text')?.text?.value\n        || ''\n      ).trim()}}\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2544,
+        -2576
+      ],
+      "id": "2fbbc16e-be06-4673-b1cd-317cfd90cb6a",
+      "name": "Enviar Mensaje1",
+      "credentials": {
+        "openAiApi": {
+          "id": "lIsgSHGWEnPHb8Zi",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.openai.com/v1/threads/{{$json.thread_id}}/messages\n",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "limit",
+              "value": "1"
+            },
+            {
+              "name": "order",
+              "value": "desc"
+            },
+            {
+              "name": "role",
+              "value": "assistant"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "OpenAi-Beta",
+              "value": "assistants=v2"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1920,
+        -2864
+      ],
+      "id": "018b77dc-9956-4987-8860-7f3ed0226ac2",
+      "name": "Obtener Respuesta1",
+      "credentials": {
+        "openAiApi": {
+          "id": "lIsgSHGWEnPHb8Zi",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "whatsapp:+16286001287",
+        "to": "={{ \n  'whatsapp:+' + (\n    $node['Normalize1'].json.from_e164 ||\n    $node['Lead fields'].json.phone ||\n    $json.phone ||\n    $node['Webhook1'].json.body.WaId\n  )\n}}",
+        "toWhatsapp": "=",
+        "message": "={{ $json.data?.[0]?.content?.[0]?.text?.value }}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        -1520,
+        -2880
+      ],
+      "id": "f15b2605-53d9-4bac-bba1-a2e7caf421cb",
+      "name": "Send an SMS/MMS/WhatsApp message1",
+      "credentials": {
+        "twilioApi": {
+          "id": "LQRdqkAAVi65ZwRH",
+          "name": "Twilio account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "timestamp",
+              "type": "string",
+              "value": "={{ new Date().toISOString() }}",
+              "id": "3fef1d51-aceb-41de-a39e-d0dd869c632f"
+            },
+            {
+              "name": "phone",
+              "type": "string",
+              "value": "={{$json.from_e164}}",
+              "id": "c6d532de-94f8-4ca7-8fd0-8809cc817b02"
+            },
+            {
+              "name": "=from_e164",
+              "type": "string",
+              "value": "={{ $json.from_e164 }}",
+              "id": "ef676bc9-87d0-4cc1-b9e0-8e6ae2f12a11"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "={{ $('Webhook1').item.json.body.ProfileName || '' }}",
+              "id": "0b498632-1cfe-4fb3-acd0-13cb63c5e67b"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "={{ $('Webhook1').item.json.body.Body }}",
+              "id": "57f1a4fa-6cb0-44d0-9682-9f5f89969259"
+            },
+            {
+              "name": "thread_id",
+              "type": "string",
+              "value": "={{$json.thread_id}}",
+              "id": "4f6a12d4-c2e8-486b-b0cd-1b094badefc0"
+            },
+            {
+              "name": "message_sid",
+              "type": "string",
+              "value": "={{ $json.message_sid || '' }}",
+              "id": "fdf344a5-63d2-488b-9736-c5d1d60f5afe"
+            },
+            {
+              "name": "source",
+              "type": "string",
+              "value": "={{ $json.source || '' }}",
+              "id": "aa5ddd82-5018-461d-8ed2-4289f3ddc66a"
+            },
+            {
+              "id": "d2c5591f-494a-4e52-a288-affb8578d04f",
+              "name": "last_message",
+              "value": "={{$json.message}}\n",
+              "type": "string"
+            },
+            {
+              "id": "3ca3ab9c-600f-45d9-b21d-baff68ce475a",
+              "name": "=last_reply",
+              "value": "={{$json.body.data[0].content[0].text.value}}\n",
+              "type": "string"
+            },
+            {
+              "id": "a4abdecd-92a4-4260-a446-bf88cae6583e",
+              "name": "=last_thread_id",
+              "value": "={{$json.thread_id}}",
+              "type": "string"
+            },
+            {
+              "id": "87293b99-6bde-4c92-921e-353fcd3d90bf",
+              "name": "=assistant_reply",
+              "value": "={{$json.body.data[0].content[0].text.value}}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "4db7aa10-71cb-40d6-8327-b181ef0da4be",
+      "name": "Lead fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1712,
+        -3264
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "114b6TZibq9yknsuZ8zKpgfWpTJW5-j0W2KZmBT_Hl30"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "conversations",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "from_e164": "={{ $json.from_e164 }}",
+            "name": "={{ $json.name }}",
+            "last_message": "={{ $json.last_message_at }}",
+            "phone": "={{ $json.phone }}",
+            "message": "={{ $json.message }}",
+            "assistant_reply": "={{ $json.assistant_reply }}",
+            "thread_id": "={{ $json.thread_id }}",
+            "message_sid": "={{ $json.message_sid }}",
+            "timestamp": "={{ $json.timestamp }}",
+            "last_reply": "={{ $json.last_reply }}",
+            "last_message_at": "={{ $json.last_message_at }}",
+            "last_thread_id": "={{ $json.last_thread_id }}",
+            "source": "={{ $json.source }}"
+          },
+          "matchingColumns": [
+            "from_e164"
+          ],
+          "schema": [
+            {
+              "id": "from_e164",
+              "displayName": "from_e164",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_message",
+              "displayName": "last_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_reply",
+              "displayName": "last_reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_message_at",
+              "displayName": "last_message_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_thread_id",
+              "displayName": "last_thread_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "thread_id",
+              "displayName": "thread_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "assistant_reply",
+              "displayName": "assistant_reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "message_sid",
+              "displayName": "message_sid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1360,
+        -3392
+      ],
+      "id": "dcc15a29-0012-41ab-a0b4-09b317095676",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "12XsQlny3ctt8evo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "114b6TZibq9yknsuZ8zKpgfWpTJW5-j0W2KZmBT_Hl30"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "messages",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "from_e164": "={{ $json.from_e164 }}",
+            "phone": "={{ $('Webhook1').item.json.body.WaId }}",
+            "name": "={{ $('Webhook1').item.json.body.ProfileName }}",
+            "thread_id": "={{ $json.thread_id }}",
+            "message": "={{ $json.message }}",
+            "assistant_reply": "={{ $json.assistant_reply }}",
+            "message_sid": "={{ $json.message_sid }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "from_e164",
+              "displayName": "from_e164",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thread_id",
+              "displayName": "thread_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "assistant_reply",
+              "displayName": "assistant_reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message_sid",
+              "displayName": "message_sid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1312,
+        -3120
+      ],
+      "id": "4a9c2725-27d7-4075-9b22-86c20dce873d",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "12XsQlny3ctt8evo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "300140e4-3283-4ba7-86db-0aeaab823f70",
+              "name": "=from_e164",
+              "value": "={{$json.body?.WaId || $json.body?.From || $json.From || $json.from || $json.wa_id || $json.body?.from || ''}}",
+              "type": "string"
+            },
+            {
+              "id": "f8e7dcc1-3ec0-4a56-9f07-5e33c50d2289",
+              "name": "message",
+              "value": "={{$json.body?.Body || $json.body?.message || $json.message || ''}}",
+              "type": "string"
+            },
+            {
+              "id": "093c1af3-2eed-4755-9daf-e755f75d02e3",
+              "name": "message_sid",
+              "value": "={{$json.body?.MessageSid || $json.message_sid || ''}}",
+              "type": "string"
+            },
+            {
+              "id": "bc2d136f-1d4e-4f99-b584-23493ff4bc03",
+              "name": "timestamp",
+              "value": "={{$json.body?.Timestamp || $json.timestamp || Date.now()}}",
+              "type": "string"
+            },
+            {
+              "id": "6781f9bb-ba73-4d2e-8d76-6eb61a03b331",
+              "name": "source",
+              "value": "={{$json.body?.MessageSid ? 'twilio' : (($json.body?.WaId || $json.body?.waId) ? 'wa' : 'unknown')}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3600,
+        -2928
+      ],
+      "id": "0cae97ee-c6ef-4893-8865-957a6d74f990",
+      "name": "Normalize1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "114b6TZibq9yknsuZ8zKpgfWpTJW5-j0W2KZmBT_Hl30",
+          "mode": "list",
+          "cachedResultName": "TERRI_LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/114b6TZibq9yknsuZ8zKpgfWpTJW5-j0W2KZmBT_Hl30/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 358399157,
+          "mode": "list",
+          "cachedResultName": "conversations",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/114b6TZibq9yknsuZ8zKpgfWpTJW5-j0W2KZmBT_Hl30/edit#gid=358399157"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "from_e164",
+              "lookupValue": "={{ $json.from_e164 }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -3568,
+        -2688
+      ],
+      "id": "a1d885d3-c172-496f-a001-76ce4e2ae9e5",
+      "name": "Lookup1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "12XsQlny3ctt8evo",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -3232,
+        -2992
+      ],
+      "id": "48c324e8-b4f9-4722-80e9-e68f98351f2d",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3a02e063-0995-48a5-a5b0-06cc186d0e08",
+              "leftValue": "={{$json.last_thread_id}}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3024,
+        -2896
+      ],
+      "id": "4accac17-fdb4-4481-8b33-1bd8b38d1fdf",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a906a2f1-f367-490c-897f-f983f7bf4669",
+              "name": "thread_id",
+              "value": "={{$json.last_thread_id}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2784,
+        -3056
+      ],
+      "id": "1daf882e-926d-4c56-9902-ef9a3737ea79",
+      "name": "Use existing thread1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2544,
+        -2944
+      ],
+      "id": "2d06717b-bea0-4127-95d3-3b8b26d00e3c",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/threads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "OpenAI-Beta",
+              "value": "assistants=v2"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3072,
+        -2640
+      ],
+      "id": "283177c0-5fcd-4335-a661-aa55517dc957",
+      "name": "Use new thread1",
+      "credentials": {
+        "openAiApi": {
+          "id": "lIsgSHGWEnPHb8Zi",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.openai.com/v1/threads/{{$json.thread_id}}/runs",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "OpenAI-Beta",
+              "value": "assistants=v2"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {}
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"assistant_id\": \"asst_QdZhEIIIcx2xoesqyyguS0qj\",\n  \"response_format\": { \"type\": \"text\" },\n  \"tool_choice\": \"auto\",\n  \"parallel_tool_calls\": true,\n  \"temperature\": 0.2,\n  \"top_p\": 0.3,\n  \"tools\": [\n    { \"type\": \"file_search\" }\n  ],\n  \"tool_resources\": {\n    \"file_search\": {\n      \"vector_store_ids\": [\n        \"vs_688d56c2eb9081919d9287dfa3ed1cb8\"\n      ]\n    }\n  },\n  \"metadata\": {\n    \"channel\": \"whatsapp\",\n    \"from_e164\": \"{{$json.from_e164}}\",\n    \"last_thread_id\": \"{{$json.last_thread_id}}\"\n  }\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2304,
+        -2720
+      ],
+      "id": "2592645d-ab0b-417f-a354-7e8d6ed6b2ac",
+      "name": "Créate Run1",
+      "credentials": {
+        "openAiApi": {
+          "id": "lIsgSHGWEnPHb8Zi",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2080,
+        -3104
+      ],
+      "id": "28a24577-f85c-4d6f-bfcc-652eb6b28c9c",
+      "name": "Merge5"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.openai.com/v1/threads/{{$json.thread_id}}/runs/{{$json.id}}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "OpenAI-Beta",
+              "value": "assistants=v2"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2128,
+        -2528
+      ],
+      "id": "2f1f33a4-3f00-4e3e-96ed-00d4d1e72040",
+      "name": "Check run1",
+      "credentials": {
+        "openAiApi": {
+          "id": "lIsgSHGWEnPHb8Zi",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e81b3043-c014-453f-a5b9-8f44bdbc9a5b",
+              "leftValue": "={{$json.status}}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1888,
+        -2544
+      ],
+      "id": "c608e4b0-c161-4844-81c3-b439631c34f7",
+      "name": "If3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1728,
+        -2288
+      ],
+      "id": "d2358718-c55d-4fd8-b458-55497677827b",
+      "name": "Wait1",
+      "webhookId": "f2818aab-7347-43cc-822b-56eb673b7ae8"
+    },
+    {
+      "parameters": {
+        "content": "## I'm a note 5.19 4 SEP \n**Double click** to edit me. [Guide](https://docs.n8n.io/workflows/sticky-notes/)"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1296,
+        -2544
+      ],
+      "typeVersion": 1,
+      "id": "9b77ff7e-69a8-4ce1-ad7a-cbd5edf4d583",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Crear Thread1": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Normalize1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Mensaje1": {
+      "main": [
+        [
+          {
+            "node": "Créate Run1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Respuesta1": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Lead fields": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize1": {
+      "main": [
+        [
+          {
+            "node": "Lookup1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup1": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Use existing thread1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Use new thread1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Use existing thread1": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Merge5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Enviar Mensaje1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Use new thread1": {
+      "main": [
+        [
+          {
+            "node": "Crear Thread1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Créate Run1": {
+      "main": [
+        [
+          {
+            "node": "Check run1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge5": {
+      "main": [
+        [
+          {
+            "node": "Lead fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send an SMS/MMS/WhatsApp message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check run1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Obtener Respuesta1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Check run1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3c0f9452-f18a-4403-bebe-4b589846c6d5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6909343c8e9fc8c0409edf5a774ba61b41effc3a90319db4cb92f50a7ad9a420"
+  },
+  "id": "0oX3nEYDTmiaOnV7",
+  "tags": []
+}
