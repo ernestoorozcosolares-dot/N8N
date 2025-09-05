@@ -99,6 +99,10 @@
             {
               "name": "role",
               "value": "assistant"
+            },
+            {
+              "name": "run_id",
+              "value": "={{$json.id}}"
             }
           ]
         },
@@ -208,6 +212,12 @@
               "id": "aa5ddd82-5018-461d-8ed2-4289f3ddc66a"
             },
             {
+              "name": "run_id",
+              "type": "string",
+              "value": "={{ $json.id }}",
+              "id": "edc4f9b6-5b1b-4f58-9dd9-80fd37e9cfb3"
+            },
+            {
               "id": "d2c5591f-494a-4e52-a288-affb8578d04f",
               "name": "last_message",
               "value": "={{$json.message}}\n",
@@ -216,7 +226,7 @@
             {
               "id": "3ca3ab9c-600f-45d9-b21d-baff68ce475a",
               "name": "=last_reply",
-              "value": "={{$json.body.data[0].content[0].text.value}}\n",
+              "value": "={{$json.data[0].content[0].text.value}}\n",
               "type": "string"
             },
             {
@@ -228,7 +238,7 @@
             {
               "id": "87293b99-6bde-4c92-921e-353fcd3d90bf",
               "name": "=assistant_reply",
-              "value": "={{$json.body.data[0].content[0].text.value}}\n",
+              "value": "={{$json.data[0].content[0].text.value}}\n",
               "type": "string"
             }
           ]
@@ -267,6 +277,7 @@
             "phone": "={{ $json.phone }}",
             "message": "={{ $json.message }}",
             "assistant_reply": "={{ $json.assistant_reply }}",
+            "run_id": "={{ $json.run_id }}",
             "thread_id": "={{ $json.thread_id }}",
             "message_sid": "={{ $json.message_sid }}",
             "timestamp": "={{ $json.timestamp }}",
@@ -400,6 +411,16 @@
               "removed": false
             },
             {
+              "id": "run_id",
+              "displayName": "run_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
               "id": "message_sid",
               "displayName": "message_sid",
               "required": false,
@@ -453,6 +474,7 @@
             "thread_id": "={{ $json.thread_id }}",
             "message": "={{ $json.message }}",
             "assistant_reply": "={{ $json.assistant_reply }}",
+            "run_id": "={{ $json.run_id }}",
             "message_sid": "={{ $json.message_sid }}"
           },
           "matchingColumns": [],
@@ -514,6 +536,15 @@
             {
               "id": "assistant_reply",
               "displayName": "assistant_reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "run_id",
+              "displayName": "run_id",
               "required": false,
               "defaultMatch": false,
               "display": true,
