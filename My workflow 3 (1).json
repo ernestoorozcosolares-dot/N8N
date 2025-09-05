@@ -89,14 +89,6 @@
         "queryParameters": {
           "parameters": [
             {
-              "name": "limit",
-              "value": "1"
-            },
-            {
-              "name": "order",
-              "value": "desc"
-            },
-            {
               "name": "role",
               "value": "assistant"
             },
