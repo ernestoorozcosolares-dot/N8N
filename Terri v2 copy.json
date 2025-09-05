@@ -774,6 +774,30 @@
     },
     {
       "parameters": {
+        "values": {
+          "addFields": [
+            {
+              "name": "message",
+              "type": "string",
+              "value": "={{ $node[\"Normalize1\"].json.message }}",
+              "id": "b8f5d4f1-6f88-4df3-9e9d-9bfa0d5e7a1c"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2960,
+        -2640
+      ],
+      "id": "47971e5a-9645-4516-a899-759131550357",
+      "name": "Merge6"
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "=https://api.openai.com/v1/threads/{{$json.thread_id}}/runs",
         "authentication": "predefinedCredentialType",
@@ -1068,6 +1092,17 @@
       ]
     },
     "Use new thread1": {
+      "main": [
+        [
+          {
+            "node": "Merge6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge6": {
       "main": [
         [
           {
