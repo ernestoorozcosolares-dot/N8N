@@ -27,6 +27,36 @@
     },
     {
       "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a853276c-4260-46d9-ae4c-ddb27d1f43b3",
+              "name": "last_thread_id",
+              "value": "={{ $json.thread_id }}",
+              "type": "string"
+            },
+            {
+              "id": "679ff602-916c-4e32-83de-2189a2e5feb2",
+              "name": "last_message_at",
+              "value": "={{ $now }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1088,
+        528
+      ],
+      "id": "fce582f2-f9b8-4e43-aa58-39cbab46efda",
+      "name": "Set last thread1"
+    },
+    {
+      "parameters": {
         "httpMethod": "POST",
         "path": "twilio_whatsapp",
         "options": {}
@@ -275,7 +305,7 @@
             "timestamp": "={{ $json.timestamp }}",
             "last_reply": "={{ $json.last_reply }}",
             "last_message_at": "={{ $json.last_message_at }}",
-            "last_thread_id": "={{ $json.last_thread_id }}",
+            "last_thread_id": "={{ $json.thread_id }}",
             "source": "={{ $json.source }}"
           },
           "matchingColumns": [
@@ -1018,6 +1048,17 @@
   "pinData": {},
   "connections": {
     "Crear Thread1": {
+      "main": [
+        [
+          {
+            "node": "Set last thread1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set last thread1": {
       "main": [
         [
           {
