@@ -674,6 +674,59 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ (new Date().getTime()) - (new Date($json.last_message_at).getTime()) }}",
+              "rightValue": 86400000,
+              "operator": {
+                "type": "number",
+                "operation": "larger"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1920,
+        512
+      ],
+      "id": "f8dddcfd-042a-4525-aeb5-f2b186698895",
+      "name": "If stale conversation"
+    },
+    {
+      "parameters": {
+        "values": [
+          {
+            "name": "last_thread_id",
+            "value": "",
+            "type": "string",
+            "id": "fa91ce35-1dbe-4d1f-9d75-f300e84b1a5f"
+          }
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1760,
+        512
+      ],
+      "id": "ded1e401-bbac-4bd3-afb1-e95db6a55944",
+      "name": "Clear last thread id"
+    },
+    {
+      "parameters": {
         "mode": "combine",
         "combineBy": "combineByPosition",
         "options": {}
@@ -1041,6 +1094,35 @@
       ]
     },
     "Lookup1": {
+      "main": [
+        [
+          {
+            "node": "If stale conversation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If stale conversation": {
+      "main": [
+        [
+          {
+            "node": "Clear last thread id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Clear last thread id": {
       "main": [
         [
           {
