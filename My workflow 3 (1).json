@@ -95,14 +95,6 @@
             {
               "name": "run_id",
               "value": "={{$json.id}}"
-            },
-            {
-              "name": "order",
-              "value": "desc"
-            },
-            {
-              "name": "limit",
-              "value": "1"
             }
           ]
         },
