@@ -287,124 +287,22 @@
         },
         "sheetName": {
           "__rl": true,
-          "value": "conversations",
+          "value": "datastore",
           "mode": "name"
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "from_e164": "={{ $json.from_e164 }}",
-            "name": "={{ $json.name }}",
-            "last_message": "={{ $json.last_message_at }}",
-            "phone": "={{ $json.phone }}",
-            "message": "={{ $json.message }}",
-            "assistant_reply": "={{ $json.assistant_reply }}",
-            "run_id": "={{ $json.run_id }}",
-            "thread_id": "={{ $json.thread_id }}",
-            "message_sid": "={{ $json.message_sid }}",
-            "timestamp": "={{ $json.timestamp }}",
-            "last_reply": "={{ $json.last_reply }}",
-            "last_message_at": "={{ $json.last_message_at }}",
-            "last_thread_id": "={{ $json.thread_id }}",
-            "source": "={{ $json.source }}"
+            "user_id": "={{ $json.phone }}",
+            "thread_id": "={{ $json.thread_id }}"
           },
           "matchingColumns": [
-            "from_e164"
+            "user_id"
           ],
           "schema": [
             {
-              "id": "from_e164",
-              "displayName": "from_e164",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "name",
-              "displayName": "name",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "last_message",
-              "displayName": "last_message",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "last_reply",
-              "displayName": "last_reply",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "last_message_at",
-              "displayName": "last_message_at",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "last_thread_id",
-              "displayName": "last_thread_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "source",
-              "displayName": "source",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "timestamp",
-              "displayName": "timestamp",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "phone",
-              "displayName": "phone",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "message",
-              "displayName": "message",
+              "id": "user_id",
+              "displayName": "user_id",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -415,36 +313,6 @@
             {
               "id": "thread_id",
               "displayName": "thread_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "assistant_reply",
-              "displayName": "assistant_reply",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "run_id",
-              "displayName": "run_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "message_sid",
-              "displayName": "message_sid",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -671,16 +539,14 @@
         },
         "sheetName": {
           "__rl": true,
-          "value": 358399157,
-          "mode": "list",
-          "cachedResultName": "conversations",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/114b6TZibq9yknsuZ8zKpgfWpTJW5-j0W2KZmBT_Hl30/edit#gid=358399157"
+          "value": "datastore",
+          "mode": "name"
         },
         "filtersUI": {
           "values": [
             {
-              "lookupColumn": "from_e164",
-              "lookupValue": "={{ $json.from_e164 }}"
+              "lookupColumn": "user_id",
+              "lookupValue": "={{ $json.phone }}"
             }
           ]
         },
@@ -782,7 +648,7 @@
           "conditions": [
             {
               "id": "3a02e063-0995-48a5-a5b0-06cc186d0e08",
-              "leftValue": "={{$json.last_thread_id}}",
+              "leftValue": "={{$json.thread_id}}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -811,7 +677,7 @@
             {
               "id": "a906a2f1-f367-490c-897f-f983f7bf4669",
               "name": "thread_id",
-              "value": "={{$json.last_thread_id}}",
+              "value": "={{$json.thread_id}}",
               "type": "string"
             }
           ]
