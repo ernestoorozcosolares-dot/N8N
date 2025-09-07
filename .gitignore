@@ -1,0 +1,9 @@
+node_modules
+.dist
+Dist
+*.log
+.env
+config.yaml
+dist
+token.json
+
