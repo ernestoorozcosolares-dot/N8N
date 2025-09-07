@@ -1,0 +1,76 @@
+feeds:
+  - name: realestatemarket
+    mode: auto
+    pageUrl: "https://realestatemarket.com.mx/"
+    list:
+      selector: "article a[href]"
+      attr: "href"
+    article:
+      selector: "article, .entry-content, .post-content"
+  - name: inmuebles24
+    mode: auto
+    pageUrl: "https://www.inmuebles24.com/blog/noticias/"
+    list:
+      selector: "a[href*='/blog/']"
+      attr: "href"
+    article:
+      selector: "article, .entry-content, .post-content"
+  - name: theclose
+    mode: auto
+    pageUrl: "https://theclose.com/"
+    forceRssUrl: "https://theclose.com/feed/"
+    article:
+      selector: "article, .entry-content, .post-content"
+  - name: forbes-mx-bienes-raices
+    mode: auto
+    pageUrl: "https://forbes.com.mx/tag/bienes-raices/"
+    list:
+      selector: "a[href*='/tag/bienes-raices/'], a[href*='/202']"
+      attr: "href"
+    article:
+      selector: "article, .single__content, .entry-content, .post-content"
+  - name: nytimes-realestate
+    mode: auto
+    pageUrl: "https://www.nytimes.com/section/realestate"
+    forceRssUrl: "https://rss.nytimes.com/services/xml/rss/nyt/RealEstate.xml"
+    article:
+      selector: "section[name='articleBody'], article"
+  - name: century21-mx
+    mode: auto
+    pageUrl: "https://blog.century21mexico.com/"
+    forceRssUrl: "https://blog.century21mexico.com/feed/"
+    article:
+      selector: "article, .entry-content, .post-content"
+  - name: nar-blogs
+    mode: auto
+    pageUrl: "https://www.nar.realtor/blogs"
+    list:
+      selector: "a[href*='/blogs/']"
+      attr: "href"
+    article:
+      selector: "article, .content, .entry-content, .post-content"
+
+translate:
+  enabled: true
+  targetLang: "es"
+
+summarize:
+  topic: "inmobiliario y desarrollo"
+  style: "120-180 palabras + 5 bullets (≤12 palabras) + 1 comentario crítico"
+
+approval:
+  method: gmail
+  email_subject_prefix: "[APPROVAL]"
+  webhook:
+    approve_url: "${PUBLIC_BASE_URL}/approve"
+    reject_url: "${PUBLIC_BASE_URL}/reject"
+
+destinations:
+  blogger:
+    enabled: true
+    draft: false
+    labels: ["resumen","inmobiliario"]
+  email_list:
+    enabled: true
+    subjectPrefix: "Novedades"
+    useBrevoListId: false
